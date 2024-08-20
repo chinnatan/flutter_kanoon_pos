@@ -23,7 +23,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn variant="outlined" block>เข้าสู่ระบบด้วย Google</v-btn>
+                <v-btn variant="outlined" block @click="handleLogin">เข้าสู่ระบบด้วย Google</v-btn>
               </v-col>
             </v-row>
             <v-row no-gutters class="mt-2">
@@ -37,6 +37,22 @@
     </v-container>
   </v-main>
 </template>
+
+<script setup>
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
+
+function handleLogin() {
+  const dummyUserData = {
+    name: 'John Doe',
+    email: 'john@example.com',
+  };
+
+  authStore.loginWithGoogle();
+}
+
+</script>
 
 <style scoped>
 .v-main {

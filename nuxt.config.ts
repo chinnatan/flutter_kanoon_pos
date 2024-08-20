@@ -15,12 +15,28 @@ export default defineNuxtConfig({
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },
-    //...
+    "@pinia/nuxt",
   ],
   vite: {
     vue: {
       template: {
         transformAssetUrls,
+      },
+    },
+  },
+  plugins: ["~/plugins/firebase.client.ts"],
+  runtimeConfig: {
+    apiKey: process.env.apiKey,
+    authDomain: process.env.authDomain,
+    projectId: process.env.projectId,
+    public: {
+      firebase: {
+        apiKey: process.env.apiKey,
+        authDomain: process.env.authDomain,
+        projectId: process.env.projectId,
+        storageBucket: process.env.storageBucket,
+        messagingSenderId: process.env.messagingSenderId,
+        appId: process.env.appId,
       },
     },
   },
