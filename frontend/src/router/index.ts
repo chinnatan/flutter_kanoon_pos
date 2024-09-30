@@ -6,7 +6,7 @@ const generateTitle = (title: string) =>
 
 const routesPath = [
   {
-    path: "/login",
+    path: "/",
     name: "login",
     meta: { title: generateTitle("เข้าสู่ระบบ") },
     component: () => import("@/pages/login.vue"),

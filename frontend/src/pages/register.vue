@@ -4,7 +4,7 @@
       <v-row no-gutters>
         <v-col cols="12" md="6" class="mx-auto">
           <v-card
-            title="สมัครสมาชิก"
+            title="ข้อมูลเพิ่มเติม"
             variant="outlined"
             class="bg-white"
             elevation="8"
@@ -19,20 +19,33 @@
                       type="email"
                       variant="outlined"
                       density="compact"
-                      :rules="emailRules"
+                      required
+                      disabled
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row no-gutters>
+                  <v-col>
+                    <v-text-field
+                      v-model="fullname"
+                      label="ชื่อ - นามสกุล"
+                      type="text"
+                      variant="outlined"
+                      density="compact"
+                      :rules="fullnameRules"
                       required
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <v-row no-gutters class="mt-3">
+                <v-row no-gutters class="mt-2">
                   <v-col>
                     <v-text-field
-                      v-model="password"
-                      label="รหัสผ่าน"
+                      v-model="storename"
+                      label="ชื่อร้านค้า"
                       density="compact"
-                      type="password"
+                      type="text"
                       variant="outlined"
-                      :rules="passwordRules"
+                      :rules="storenameRules"
                       required
                     ></v-text-field>
                   </v-col>
@@ -44,23 +57,11 @@
                       color="primary"
                       block
                       :loading="isLoading"
-                      >สมัครสมาชิก</v-btn
+                      >ยืนยัน</v-btn
                     >
                   </v-col>
                 </v-row>
               </v-form>
-              <v-row class="mt-2 mb-2">
-                <v-col cols="12" md="6" class="mx-auto">
-                  <v-divider>หรือ</v-divider>
-                </v-col>
-              </v-row>
-              <v-row no-gutters>
-                <v-col>
-                  <v-btn variant="outlined" to="/login" block
-                    >เข้าสู่ระบบ</v-btn
-                  >
-                </v-col>
-              </v-row>
             </v-card-text>
           </v-card>
         </v-col>
@@ -70,31 +71,35 @@
 </template>
 
 <script lang="ts" setup>
+import UserInfoModel from "@/model/user/user_info.model";
 import router from "@/router";
-import firebaseAuth from "firebase/auth";
-import firebase from "firebase/compat/app";
+import { useAuth } from "@/stores/auth";
+
+const { getUserInfo } = useAuth();
+
+const userInfo = getUserInfo as UserInfoModel;
+if (!userInfo) {
+  router.push("/");
+}
 
 const email = ref("");
-const password = ref("");
+const fullname = ref("");
+const storename = ref("");
+
+email.value = userInfo.email;
+fullname.value = userInfo.fullname;
+
 const isLoading = ref(false);
-const emailRules = [
-  (v: string) => !!v || "กรุณากรอกอีเมล์",
-  (v: string) => /.+@.+\..+/.test(v) || "รูปแบบอีเมล์ไม่ถูกต้อง",
-];
-const passwordRules = [
-  (v: string) => !!v || "กรุณากรอกรหัสผ่าน",
-  (v: string) => v.length >= 6 || "รหัสผ่านต้องมีอย่างน้อย 6 ตัว",
-];
+const fullnameRules = [(v: string) => !!v || "กรุณากรอกชื่อและนามสกุล"];
+const storenameRules = [(v: string) => !!v || "กรุณากรอกชื่อร้านค้า"];
 
 const register = async () => {
   try {
-    isLoading.value = true;
-    await firebase
-      .auth()
-      .createUserWithEmailAndPassword(email.value, password.value);
-    console.log("สมัครสมาชิกสำเร็จ");
-    isLoading.value = false;
-    router.push("/login");
+    // isLoading.value = true;
+    // await useAuth.
+    // console.log("สมัครสมาชิกสำเร็จ");
+    // isLoading.value = false;
+    // router.push("/login");
   } catch (error) {
     isLoading.value = false;
     alert((error as any).message);

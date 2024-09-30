@@ -1,2 +1,7 @@
 .env
 .DS_Store
+backend/src/secret/kanoon.pos.firebase.json
+db
+backend/node_modules
+frontend/dev-dist
+backend/src/config/kanoon-pos-firebase-adminsdk.json
