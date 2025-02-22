@@ -1,4 +1,4 @@
-package com.example.flutter_kanoon_pos
+package com.zkcnt.flutter_kanoon_pos
 
 import io.flutter.embedding.android.FlutterActivity
 

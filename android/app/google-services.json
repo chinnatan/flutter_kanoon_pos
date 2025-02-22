@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "468834203546",
+    "project_id": "zkcnt-kanoon-pos",
+    "storage_bucket": "zkcnt-kanoon-pos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468834203546:android:146f75527943e9808cac23",
+        "android_client_info": {
+          "package_name": "com.example.flutter_kanoon_pos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZQMcyIduc1_l7YutYyS_7TxEbm1C7DgA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:468834203546:android:2943141b31cac44a8cac23",
+        "android_client_info": {
+          "package_name": "com.zkcnt.flutter_kanoon_pos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZQMcyIduc1_l7YutYyS_7TxEbm1C7DgA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
