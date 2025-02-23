@@ -10,16 +10,21 @@ import 'package:flutter_kanoon_pos/features/auth/data/repository/auth_repository
 import 'package:flutter_kanoon_pos/features/auth/domain/usecase/auth_usecase.dart';
 import 'package:flutter_kanoon_pos/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:flutter_kanoon_pos/firebase_options.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+  static final _router = WebRoutes.init();
 
   @override
   Widget build(BuildContext context) {
@@ -28,45 +33,63 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
       ),
-      routerConfig: WebRoutes.init(),
+      routerConfig: _router,
+      scaffoldMessengerKey: scaffoldMessengerKey,
       builder: (context, child) {
-        return ToastificationWrapper(
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create:
-                    (context) => AuthBloc(
-                      signInWithEmailAndPassword: SignInWithEmailAndPassword(
-                        AuthRepositoryImpl(
-                          remoteDataSource: AuthRemoteDatasource(),
+        return GlobalLoaderOverlay(
+          child: ToastificationWrapper(
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create:
+                      (context) => AuthBloc(
+                        signInWithEmailAndPassword: SignInWithEmailAndPassword(
+                          AuthRepositoryImpl(
+                            remoteDataSource: AuthRemoteDatasource(),
+                          ),
                         ),
                       ),
-                    ),
-              ),
-              BlocProvider(create: (context) => ToastBloc()),
-            ],
-            child: MultiBlocListener(
-              listeners: [
-                BlocListener<ToastBloc, ToastState>(
-                  listener: (context, state) {
-                    if (state is ShowToastState) {
-                      switch (state.toastType) {
-                        case ToastType.success:
-                          ToastUtil.showSuccess(context, state.message);
-                          break;
-                        case ToastType.error:
-                          ToastUtil.showError(context, state.message);
-                          break;
-                        default:
-                          break;
-                      }
-                    }
-                  },
                 ),
+                BlocProvider(create: (context) => ToastBloc()),
               ],
-              child: ToastificationConfigProvider(
-                config: const ToastificationConfig(alignment: Alignment.center),
-                child: child!,
+              child: MultiBlocListener(
+                listeners: [
+                  BlocListener<ToastBloc, ToastState>(
+                    listener: (context, state) {
+                      if (state is ShowToastState) {
+                        switch (state.toastType) {
+                          case ToastType.success:
+                            ToastUtil.showSuccess(context, state.message);
+                            break;
+                          case ToastType.error:
+                            ToastUtil.showError(context, state.message);
+                            break;
+                          default:
+                            break;
+                        }
+                      }
+                    },
+                  ),
+                  BlocListener<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is LoadingState) {
+                        context.loaderOverlay.show();
+                      }
+
+                      if (state is AuthSuccessState ||
+                          state is LogoutSuccessState ||
+                          state is LogoutFailureState) {
+                        context.loaderOverlay.hide();
+                      }
+                    },
+                  ),
+                ],
+                child: ToastificationConfigProvider(
+                  config: const ToastificationConfig(
+                    alignment: Alignment.center,
+                  ),
+                  child: child!,
+                ),
               ),
             ),
           ),

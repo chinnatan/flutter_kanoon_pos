@@ -28,7 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventLogin>((event, emit) async {
-      emit(AuthLoadingState());
+      emit(LoadingState());
       try {
         logger.i("email: ${event.email}");
 
@@ -58,6 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<LogoutEvent>((event, emit) async {
+      emit(LoadingState());
       try {
         await FirebaseAuth.instance.signOut();
         emit(LogoutSuccessState());

@@ -46,6 +46,7 @@ dependencies:
   responsive_framework: ^1.5.1
   logger: ^2.5.0
   toastification: ^3.0.0
+  loader_overlay: ^5.0.0
 
 dev_dependencies:
   flutter_test:
