@@ -1,6 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_kanoon_pos/core/blocs/toast/toast_bloc.dart';
+import 'package:flutter_kanoon_pos/core/constants/constants.dart';
+import 'package:flutter_kanoon_pos/core/routes/web_routes.dart';
+import 'package:flutter_kanoon_pos/core/utility/toast_util.dart';
+import 'package:flutter_kanoon_pos/features/auth/data/datasource/auth_remote_datasource.dart';
+import 'package:flutter_kanoon_pos/features/auth/data/repository/auth_repository_impl.dart';
+import 'package:flutter_kanoon_pos/features/auth/domain/usecase/auth_usecase.dart';
+import 'package:flutter_kanoon_pos/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:flutter_kanoon_pos/firebase_options.dart';
+import 'package:toastification/toastification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,61 +21,57 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Kanoon POS',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      routerConfig: WebRoutes.init(),
+      builder: (context, child) {
+        return ToastificationWrapper(
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create:
+                    (context) => AuthBloc(
+                      signInWithEmailAndPassword: SignInWithEmailAndPassword(
+                        AuthRepositoryImpl(
+                          remoteDataSource: AuthRemoteDatasource(),
+                        ),
+                      ),
+                    ),
+              ),
+              BlocProvider(create: (context) => ToastBloc()),
+            ],
+            child: MultiBlocListener(
+              listeners: [
+                BlocListener<ToastBloc, ToastState>(
+                  listener: (context, state) {
+                    if (state is ShowToastState) {
+                      switch (state.toastType) {
+                        case ToastType.success:
+                          ToastUtil.showSuccess(context, state.message);
+                          break;
+                        case ToastType.error:
+                          ToastUtil.showError(context, state.message);
+                          break;
+                        default:
+                          break;
+                      }
+                    }
+                  },
+                ),
+              ],
+              child: ToastificationConfigProvider(
+                config: const ToastificationConfig(alignment: Alignment.center),
+                child: child!,
+              ),
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+          ),
+        );
+      },
     );
   }
 }
