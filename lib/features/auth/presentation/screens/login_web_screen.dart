@@ -51,7 +51,10 @@ class _LoginWebScreenState extends State<LoginWebScreen> {
               BlocProvider.of<ToastBloc>(
                 context,
               ).add(ShowToastEvent(ToastType.success, "เข้าสู่ระบบสำเร็จ!"));
+              context.go(WebRoutePathName.home);
+            }
 
+            if (state is AuthenticatedState) {
               context.go(WebRoutePathName.home);
             }
 

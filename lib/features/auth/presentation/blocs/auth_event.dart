@@ -8,3 +8,9 @@ class AuthEventLogin extends AuthEvent {
 
   AuthEventLogin(this.email, this.password);
 }
+
+class AuthCheckedLoggedEvent extends AuthEvent {}
+
+class LogoutEvent extends AuthEvent {}
+
+class LogoutSuccessEvent extends AuthEvent {}

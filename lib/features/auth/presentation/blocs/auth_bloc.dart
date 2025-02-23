@@ -13,6 +13,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInWithEmailAndPassword signInWithEmailAndPassword;
 
   AuthBloc({required this.signInWithEmailAndPassword}) : super(AuthInitial()) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      add(AuthCheckedLoggedEvent());
+    });
+
+    on<AuthCheckedLoggedEvent>((event, emit) async {
+      final currUser = FirebaseAuth.instance.currentUser;
+
+      if (currUser != null) {
+        emit(AuthenticatedState());
+      } else {
+        emit(UnAuthenticatedState());
+      }
+    });
+
     on<AuthEventLogin>((event, emit) async {
       emit(AuthLoadingState());
       try {
@@ -29,18 +43,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           name: credential.name,
         );
 
-        // final credential = await FirebaseAuth.instance
-        //     .signInWithEmailAndPassword(
-        //       email: event.email,
-        //       password: event.password,
-        //     );
-
-        // final user = UserEnitity(
-        //   id: credential.user!.uid,
-        //   email: credential.user!.email!,
-        //   name: credential.user!.displayName ?? '',
-        // );
-
         emit(AuthSuccessState(user));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
@@ -52,6 +54,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } catch (e) {
         logger.e(e);
         emit(AuthErrorState("เกิดข้อผิดพลาด"));
+      }
+    });
+
+    on<LogoutEvent>((event, emit) async {
+      try {
+        await FirebaseAuth.instance.signOut();
+        emit(LogoutSuccessState());
+      } catch (e) {
+        logger.e(e);
+        emit(LogoutFailureState("ออกจากระบบไม่สำเร็จ"));
       }
     });
   }

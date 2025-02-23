@@ -17,3 +17,24 @@ final class AuthErrorState extends AuthState {
 
   AuthErrorState(this.message);
 }
+
+class AuthenticatedState extends AuthState {
+  AuthenticatedState();
+}
+
+class UnAuthenticatedState extends AuthState {
+  UnAuthenticatedState();
+}
+
+class AuthCheckedLoggedState extends AuthState {
+  AuthCheckedLoggedState();
+}
+
+class LogoutSuccessState extends AuthState {
+  LogoutSuccessState();
+}
+
+class LogoutFailureState extends AuthState {
+  final String message;
+  LogoutFailureState(this.message);
+}

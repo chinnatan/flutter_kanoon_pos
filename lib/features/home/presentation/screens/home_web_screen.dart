@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kanoon_pos/core/components/side_menu.dart';
 
 class HomeWebScreen extends StatelessWidget {
   const HomeWebScreen({super.key});
@@ -6,7 +7,17 @@ class HomeWebScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(body: Center(child: Text('Hello, World!'))),
+      child: Scaffold(
+        body: Row(
+          children: [
+            Expanded(flex: 1, child: SideMenuWidget()),
+            Expanded(
+              flex: 5,
+              child: Container(color: Theme.of(context).primaryColorLight),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
