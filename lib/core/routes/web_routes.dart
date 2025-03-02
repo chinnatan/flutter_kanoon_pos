@@ -1,17 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_kanoon_pos/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:flutter_kanoon_pos/features/auth/presentation/screens/login_web_screen.dart';
-import 'package:flutter_kanoon_pos/features/home/presentation/screens/home_web_screen.dart';
+import 'package:flutter_kanoon_pos/features/main/presentation/screens/main_web.dart';
 import 'package:go_router/go_router.dart';
 
 final _routes = [
-  GoRoute(
-    path: WebRoutePathName.login,
-    builder: (context, state) => const LoginWebScreen(),
-  ),
-  GoRoute(
-    path: WebRoutePathName.home,
-    builder: (context, state) => const HomeWebScreen(),
+  ShellRoute(
+    builder: (context, state, child) => child,
+    routes: [
+      GoRoute(
+        path: WebRoutePathName.login,
+        builder: (context, state) => const LoginWebScreen(),
+      ),
+      GoRoute(
+        path: WebRoutePathName.home,
+        builder: (context, state) => MainWebScreen(),
+      ),
+    ],
   ),
 ];
 
